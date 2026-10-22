@@ -5,7 +5,7 @@
 Network Working Group                                              Y. Ni
 Internet-Draft                                                 C. P. Liu
 Intended status: Informational                                    Huawei
-Expires: 4 January 2027                                      3 July 2026
+Expires: 25 April 2027                                   22 October 2026
 
 
                      Batch Authorization Delegation
@@ -48,7 +48,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 4 January 2027.
+   This Internet-Draft will expire on 25 April 2027.
 
 Copyright Notice
 
@@ -474,9 +474,13 @@ Table of Contents
    authorization request.
 
    *authorization_details*
-   *REQUIRED.* An JSON array containing all the consented authorization
+   *REQUIRED.* A JSON array containing all the consented authorization
    items, including the permission descriptions and their corresponding
    may_act Designated Actors.
+
+   *exp*
+   *REQUIRED.* The expiration time of the Batch Token, which also
+   defines the expiration of the batch authorization.
 
    Figure 3 shows an example of the Batch Token JWT payload, which
    encapsulates all consented authorization items from Figure 2.  The
@@ -542,26 +546,21 @@ Table of Contents
    *subject_token_type*
    *REQUIRED.* urn:ietf:params:oauth:token-type:jwt.
 
-   Since the AS has to identify the requesting Sub-Client to filter the
-   authorization items, it MUST authenticate the Sub-Client.  The AS MAY
-   use the following authentication methods:
+   *actor_token*
+   *OPTIONAL.* A security token representing the acting Sub-Client, as
+   defined in [RFC8693].
 
-   *  Password-based authentication as defined in Section 2.3.1 of
-      [RFC6749].
-
-   *  Bearer JWT-based authentication as defined in [RFC7523].
-
-   *  WIMSE-based authentication methods, as defined in
-      [I-D.ietf-wimse-wpt], [I-D.ietf-wimse-http-signature], and
-      [I-D.ietf-wimse-mutual-tls].
-
-   *  Actor token as defined in [RFC8693].
+   *actor_token_type*
+   *REQUIRED.* if actor_token is present.  The type of the provided
+   actor_token, as defined in [RFC8693].
 
    Figure 4 shows a token exchange request initiated by the Flight-
-   Agent.  In this request, the Flight-Agent provides the received Batch
-   Token from Figure 3 as the subject_token.  To satisfy the requirement
-   for client authentication, the Flight-Agent provides its own identity
-   token as an actor_token.
+   Agent.  The Flight-Agent provides the Batch Token as the
+   subject_token and its identity token as the actor_token.  The AS
+   validates both tokens and matches the party identified in the
+   actor_token against may_act.sub to select the authorized items
+   assigned to the Flight-Agent.  When no actor_token is provided, the
+   AS uses the authenticated Sub-Client's identity instead.
 
     POST /as/token.oauth2 HTTP/1.1
     Host: as.example.com
@@ -581,20 +580,39 @@ Table of Contents
      "aud":"https://as.example.com",
      "iss":"https://original-issuer.example.net",
      "exp": 1778400000,
-     "sub":"flight_agent@example.net"
+     "sub":"flight_agent@example.com"
    }
 
    _Figure 5: Actor Token Claims_
 
 3.3.2.  Processing Rules of the Authorization Server
 
-   In addition to authenticating the requesting Sub-Client, the AS MUST
+   Upon receiving a token exchange request, the AS MUST:
 
-   *  Validate the Batch Token provided in the subject_token.
+   *  Validate the Batch Token provided in the subject_token, including
+      its signature, iss, aud, exp, and required claims.  The AS MUST
+      reject the request if the Batch Token is invalid or expired.
 
-   *  Retrieve the authorization_details from the Batch Token’s payload
-      and filter only those authorization items whose may_act.sub fields
-      exactly matches the authenticated Sub-Client’s identity.
+   *  Authenticate the requesting Sub-Client.  The AS MAY use the
+      following authentication methods:
+
+      -  Client password authentication as defined in Section 2.3.1 of
+         [RFC6749].
+
+      -  JWT-based client authentication as defined in [RFC7523].
+
+      -  WIMSE-based authentication methods as defined in
+         [I-D.ietf-wimse-wpt], [I-D.ietf-wimse-http-signature], and
+         [I-D.ietf-wimse-mutual-tls].
+
+   *  If an actor_token is provided, validate it and identify the party
+      represented by the token.
+
+   *  Retrieve the authorization_details from the validated Batch Token
+      and select only those authorization items whose may_act.sub
+      exactly matches the authenticated Sub-Client's identity or the
+      party identified in the actor_token, if provided.  If no
+      authorization items match, the AS MUST reject the request.
 
 3.3.3.  Downscoped Token Claims
 
@@ -621,6 +639,10 @@ Table of Contents
    enforced as a designated actor by the AS during token exchange, it
    MAY be omitted in the Downscoped Token.
 
+   *exp*
+   *REQUIRED.* The expiration time of the Downscoped Token, which MUST
+   NOT exceed the expiration time (exp) of the Batch Token.
+
    Figure 6 shows a Downscoped Token issued to the Flight-Agent after
    token exchange.  Its sub claim identifies the end-user who grants the
    consent, its aud claim points directly to target service
@@ -640,7 +662,7 @@ Table of Contents
        {
          "type": "flight_booking",
          "actions": ["search", "book"],
-         "locations": ["https://example.com/flights"],
+         "locations": ["https://example.com/flights"]
        }
      ]
    }
@@ -936,30 +958,30 @@ Table of Contents
               Schwenkschuster, A., Kasselman, P., Burgin, K., Jenkins,
               M. J., Campbell, B., and A. Parecki, "OAuth Identity and
               Authorization Chaining Across Domains", Work in Progress,
-              Internet-Draft, draft-ietf-oauth-identity-chaining-16, 26
-              June 2026, <https://datatracker.ietf.org/doc/html/draft-
-              ietf-oauth-identity-chaining-16>.
+              Internet-Draft, draft-ietf-oauth-identity-chaining-17, 19
+              July 2026, <https://datatracker.ietf.org/doc/html/draft-
+              ietf-oauth-identity-chaining-17>.
 
    [I-D.ietf-wimse-http-signature]
               Salowey, J. A. and Y. Sheffer, "WIMSE Workload-to-Workload
               Authentication with HTTP Signatures", Work in Progress,
-              Internet-Draft, draft-ietf-wimse-http-signature-03, 7
-              April 2026, <https://datatracker.ietf.org/doc/html/draft-
-              ietf-wimse-http-signature-03>.
+              Internet-Draft, draft-ietf-wimse-http-signature-08, 20
+              October 2026, <https://datatracker.ietf.org/doc/html/
+              draft-ietf-wimse-http-signature-08>.
 
    [I-D.ietf-wimse-mutual-tls]
               Salowey, J. A. and Y. Rosomakho, "Workload Authentication
               Using Mutual TLS", Work in Progress, Internet-Draft,
-              draft-ietf-wimse-mutual-tls-01, 5 May 2026,
+              draft-ietf-wimse-mutual-tls-02, 6 July 2026,
               <https://datatracker.ietf.org/doc/html/draft-ietf-wimse-
-              mutual-tls-01>.
+              mutual-tls-02>.
 
    [I-D.ietf-wimse-wpt]
               Campbell, B. and A. Schwenkschuster, "WIMSE Workload Proof
               Token", Work in Progress, Internet-Draft, draft-ietf-
-              wimse-wpt-01, 2 March 2026,
+              wimse-wpt-02, 27 August 2026,
               <https://datatracker.ietf.org/doc/html/draft-ietf-wimse-
-              wpt-01>.
+              wpt-02>.
 
 Acknowledgments
 
