@@ -204,6 +204,7 @@ The `may_act` JSON object contains fields that specify the intended actor for a 
 **aud**<br>
 **OPTIONAL.** A string that identifies the AS of the trust domain where the Sub-Client resides. If the Sub-Client and the Leader-Client are located in different Trust Domains, this field MUST be present to specify the target AS. If this field is omitted, it MUST be assumed that the Sub-Client and the Leader-Client reside in the same trust domain.
 
+
 Figure 2 shows an example of `authorization_details` containing the `may_act` field. It represents a typical travel management scenario in which the Leader-Client requests two distinct authorization items: a flight booking permission delegated to the Flight-Agent, and a hotel reservation permission delegated to the Hotel-Agent. Both Sub-Clients are located in the same trust domain as the Leader-Client so that the `may_act.aud` field is omitted. This structure demonstrates how multiple permissions can be bound to different actors within a single authorization request.
 
 ~~~
@@ -260,7 +261,10 @@ Subsequently, the AS generates a Batch Token and returns it to the Leader-Client
 **REQUIRED.** The identifier of the Leader-Client that initiated the authorization request.
 
 **authorization_details**<br>
-**REQUIRED.** An JSON array containing all the consented authorization items, including the permission descriptions and their corresponding `may_act` Designated Actors.
+**REQUIRED.** A JSON array containing all the consented authorization items, including the permission descriptions and their corresponding `may_act` Designated Actors.
+
+**exp**<br>
+**REQUIRED.** The expiration time of the Batch Token, which also defines the expiration of the batch authorization.
 
 Figure 3 shows an example of the Batch Token JWT payload, which encapsulates all consented authorization items from Figure 2. The `sub` claim identifies the user who consents, the `client_id` claim identifies the travel assistant as the Leader-Client that initiates the request, each `may_act.sub` field identifies the Sub-Client authorized to exercise the corresponding permission. The `aud` claim is set to the AS itself, as the Batch Token will be presented back to the AS for further token exchange.
 
@@ -314,18 +318,15 @@ When a Sub-Client receives a Batch Token from the Leader-Client, it MUST perform
 **subject_token_type**<br>
 **REQUIRED.** urn:ietf:params:oauth:token-type:jwt.
 
+**actor_token**<br>
+**OPTIONAL.** A security token representing the acting Sub-Client, as defined in {{RFC8693}}.
 
-Since the AS has to identify the requesting Sub-Client to filter the authorization items, it MUST authenticate the Sub-Client. The AS MAY use the following authentication methods:
+**actor_token_type**<br>
+**REQUIRED.** if `actor_token` is present. The type of the provided `actor_token`, as defined in {{RFC8693}}.
 
-*  Password-based authentication as defined in Section 2.3.1 of {{RFC6749}}.
 
-*  Bearer JWT-based authentication as defined in {{RFC7523}}.
 
-*  WIMSE-based authentication methods, as defined in {{I-D.ietf-wimse-wpt}}, {{I-D.ietf-wimse-http-signature}}, and {{I-D.ietf-wimse-mutual-tls}}.
-
-*  Actor token as defined in {{RFC8693}}.
-
-Figure 4 shows a token exchange request initiated by the Flight-Agent. In this request, the Flight-Agent provides the received Batch Token from Figure 3 as the `subject_token`. To satisfy the requirement for client authentication, the Flight-Agent provides its own identity token as an `actor_token`.
+Figure 4 shows a token exchange request initiated by the Flight-Agent. The Flight-Agent provides the Batch Token as the `subject_token` and its identity token as the `actor_token`. The AS validates both tokens and  matches the party identified in the `actor_token` against `may_act.sub` to select the authorized items assigned to the Flight-Agent. When no `actor_token` is provided, the AS uses the authenticated Sub-Client's identity instead.
 
 ~~~
  POST /as/token.oauth2 HTTP/1.1
@@ -347,7 +348,7 @@ The claims of the `actor_token` are detailed in Figure 5.
   "aud":"https://as.example.com",
   "iss":"https://original-issuer.example.net",
   "exp": 1778400000,
-  "sub":"flight_agent@example.net"
+  "sub":"flight_agent@example.com"
 }
 ~~~
 *Figure 5: Actor Token Claims*
@@ -355,11 +356,19 @@ The claims of the `actor_token` are detailed in Figure 5.
 
 ### Processing Rules of the Authorization Server
 
-In addition to authenticating the requesting Sub-Client, the AS MUST
+Upon receiving a token exchange request, the AS MUST:
 
-* Validate the Batch Token provided in the `subject_token`.
+* Validate the Batch Token provided in the `subject_token`, including its signature, `iss`, `aud`, `exp`, and required claims. The AS MUST reject the request if the Batch Token is invalid or expired.
 
-* Retrieve the `authorization_details` from the Batch Token’s payload and filter only those authorization items whose `may_act.sub` fields exactly matches the authenticated Sub-Client’s identity.
+* Authenticate the requesting Sub-Client. The AS MAY use the following authentication methods:
+
+  * Client password authentication as defined in Section 2.3.1 of {{RFC6749}}.
+  * JWT-based client authentication as defined in {{RFC7523}}.
+  * WIMSE-based authentication methods as defined in {{I-D.ietf-wimse-wpt}}, {{I-D.ietf-wimse-http-signature}}, and {{I-D.ietf-wimse-mutual-tls}}.
+
+* If an `actor_token` is provided, validate it and identify the party represented by the token.
+
+* Retrieve the `authorization_details` from the validated Batch Token and select only those authorization items whose `may_act.sub` exactly matches the authenticated Sub-Client's identity or the party identified in the actor_token, if provided. If no authorization items match, the AS MUST reject the request.
 
 ### Downscoped Token Claims
 
@@ -377,6 +386,9 @@ The AS generates a Downscoped Token that only contains the permissions in the fi
 **authorization_details**<br>
 **OPTIONAL.** A JSON array containing the permissions from the filtered authorization items. Since the `may_act` field has already been enforced as a designated actor by the AS during token exchange, it MAY be omitted in the Downscoped Token.
 
+**exp**<br>
+**REQUIRED.** The expiration time of the Downscoped Token, which MUST NOT exceed the expiration time (`exp`) of the Batch Token.
+
 Figure 6 shows a Downscoped Token issued to the Flight-Agent after token exchange. Its `sub` claim identifies the end‑user who grants the consent, its `aud` claim points directly to target service (https://example.com/flights), and the `client_id` identifies the Flight-Agent. The `authorization_details` array contains only the flight‑booking permission, with the `may_act` field removed.
 
 ~~~
@@ -392,7 +404,7 @@ Figure 6 shows a Downscoped Token issued to the Flight-Agent after token exchang
     {
       "type": "flight_booking",
       "actions": ["search", "book"],
-      "locations": ["https://example.com/flights"],
+      "locations": ["https://example.com/flights"]
     }
   ]
 }
