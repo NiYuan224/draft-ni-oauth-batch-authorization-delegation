@@ -485,8 +485,8 @@ Table of Contents
 
    *batch_id*
    *REQUIRED.* An identifier for the batch authorization.  The same
-   identifier MUST be included in the Batch Token and all Downscoped
-   Tokens derived from that batch authorization.
+   identifier MUST be used to associate the Batch Token with all
+   Downscoped Tokens derived from that batch authorization.
 
    Figure 3 shows an example of the Batch Token JWT payload, which
    encapsulates all consented authorization items from Figure 2.  The
@@ -505,7 +505,7 @@ Table of Contents
      "exp": 1777881600,
      "iat": 1777795200,
      "jti": "batch-token-8b4729cc-32e4-4370-8cf0-5796154d1296",
-     "batch_id": "batch-auth-8b4729cc-32e4-4370-8cf0-5796154d1296"
+     "batch_id": "batch-auth-8b4729cc-32e4-4370-8cf0-5796154d1296",
      "authorization_details": [
        {
          "type": "flight_booking",
@@ -680,7 +680,7 @@ Table of Contents
      "exp": 1777881600,
      "iat": 1777795210,
      "jti": "downscoped-token-7c8d9a2e-4b12-4a3f-8e6c-2f9a8b3c7d5e",
-     "batch_id": "batch-auth-8b4729cc-32e4-4370-8cf0-5796154d1296"
+     "batch_id": "batch-auth-8b4729cc-32e4-4370-8cf0-5796154d1296",
      "authorization_details": [
        {
          "type": "flight_booking",
@@ -845,7 +845,7 @@ Table of Contents
      "exp": 1777881600,
      "iat": 1777795200,
      "jti": "4a7b203c-e591-4916-b8df-d2b389f4621c",
-     "batch_id": "batch-8b4729cc-32e4-4370-8cf0-5796154d1296"
+     "batch_id": "batch-8b4729cc-32e4-4370-8cf0-5796154d1296",
      "authorization_details": [
        {
          "type": "benefit_bank_a",
@@ -887,7 +887,7 @@ Table of Contents
      "client_id": "finance_assistant@alliance.example.com",
      "iat": 1777795210,
      "exp": 1777795300,
-     "batch_id": "batch-8b4729cc-32e4-4370-8cf0-5796154d1296"
+     "batch_id": "batch-8b4729cc-32e4-4370-8cf0-5796154d1296",
      "authorization_details": [
        {
          "type": "benefit_bank_a",
@@ -903,6 +903,12 @@ Table of Contents
    and downscoped tokens fully reuse the standard profiles defined in
    Section 3 of [I-D.ietf-oauth-identity-chaining], and are therefore
    omitted here.
+
+   Noting that in step (e) of Figure 7, The AS in Domain B MUST preserve
+   the batch_id association when issuing the access token.  In step (8)
+   of Figure 7, The association MUST also be preserved when the Sub-
+   Client subsequently obtains a Downscoped Token through Token
+   Exchange.
 
 4.3.  Batch Authorization Delegation with the Cross-Domain User
 
@@ -934,9 +940,10 @@ Table of Contents
    The batch_id itself does not invalidate these tokens.  The AS MUST
    use the batch_id to identify the affected tokens and apply an
    appropriate revocation mechanism to them.  Deployments MAY use token
-   introspection [RFC7662] or Token Status List to support token status
-   checking, and event-based mechanisms such as the Shared Signals
-   Framework [SSF] to propagate revocation notifications.
+   introspection [RFC7662] or Token Status List
+   [I-D.ietf-oauth-status-list] to support token status checking, and
+   event-based mechanisms such as the Shared Signals Framework [SSF] to
+   propagate revocation notifications.
 
 6.  IANA Considerations
 
@@ -999,6 +1006,13 @@ Table of Contents
               Internet-Draft, draft-ietf-oauth-identity-chaining-17, 19
               July 2026, <https://datatracker.ietf.org/doc/html/draft-
               ietf-oauth-identity-chaining-17>.
+
+   [I-D.ietf-oauth-status-list]
+              Looker, T., Bastian, P., and C. Bormann, "Token Status
+              List (TSL)", Work in Progress, Internet-Draft, draft-ietf-
+              oauth-status-list-21, 21 June 2026,
+              <https://datatracker.ietf.org/doc/html/draft-ietf-oauth-
+              status-list-21>.
 
    [I-D.ietf-wimse-http-signature]
               Salowey, J. A. and Y. Sheffer, "WIMSE Workload-to-Workload
