@@ -591,7 +591,7 @@ In accordance with step (b), the Finance Alliance AS inspects the `may_act` fiel
 ~~~
 *Figure 9: JAG Payload*
 
-The subsequent formats of the access token, token exchange requests, and downscoped tokens fully reuse the standard profiles defined in Section 3 of {{I-D.ietf-oauth-identity-chaining}}, and are therefore omitted here. 
+The subsequent formats of the access token, token exchange requests, and downscoped tokens fully reuse the standard profiles defined in Section 3 of {{I-D.ietf-oauth-identity-chaining}}, and are therefore omitted here.
 
 Noting that in step (e) of Figure 7, The AS in Domain B MUST preserve the `batch_id` association when issuing the access token. In step (8) of Figure 7, The association MUST also be preserved when the Sub-Client subsequently obtains a Downscoped Token through Token Exchange.
 
