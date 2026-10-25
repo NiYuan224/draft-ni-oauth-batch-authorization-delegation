@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-10-22T03:46:35.285543+00:00",
+  "timestamp": "2026-10-25T03:43:36.305417+00:00",
   "repo": "NiYuan224/draft-ni-oauth-batch-authorization-delegation",
   "labels": [
     {
@@ -49,7 +49,24 @@
       "color": "ffffff"
     }
   ],
-  "issues": [],
+  "issues": [
+    {
+      "number": 2,
+      "id": "I_kwDOS4b4z88AAAABZCxWNw",
+      "title": "Introduce a Batch Authorization Identifier to Link Batch Tokens and Derived Downscoped Tokens",
+      "url": "https://github.com/NiYuan224/draft-ni-oauth-batch-authorization-delegation/issues/2",
+      "state": "OPEN",
+      "author": "NiYuan224",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "The draft does not define a common identifier linking Downscoped Tokens derived from the same Batch Token.\n\nA common identifier would enable:\n\n1. Token correlation: Identify all Downscoped Tokens derived from the same batch authorization.\n2. Shared constraints: Associate multiple Downscoped Tokens with common authorization constraints. For example, in UC8 of [draft-chen-oauth-agent-authz-use-cases](https://datatracker.ietf.org/doc/html/draft-chen-oauth-agent-authz-use-cases-04#section-4.2.3), a travel assistant delegates flight and hotel bookings to separate agents under a total budget of 100. A common identifier would allow both tokens to reference the same budget constraint.\n3. Batch revocation: Identify all affected Downscoped Tokens when the batch authorization is revoked.\n\n\n### TODO\nIntroduce a `batch_id` claim in the Batch Token and require the AS to associate each derived Downscoped Token with the same `batch_id` during Token Exchange. For JWT Downscoped Tokens, the `batch_id` claim can be included directly; for other token formats, the AS can maintain an equivalent association.\n",
+      "createdAt": "2026-10-22T08:11:51Z",
+      "updatedAt": "2026-10-22T12:55:08Z",
+      "closedAt": null,
+      "comments": []
+    }
+  ],
   "pulls": [
     {
       "number": 1,
@@ -63,7 +80,7 @@
       "labels": [],
       "body": "multiple edits\r\n====\r\nnext todo:\r\nctrl+h terminlogy changes \r\nno batch token in cross domain\r\nupdate examples\r\nfix the code\r\nsimplify derivative scenarios",
       "createdAt": "2026-06-27T10:03:40Z",
-      "updatedAt": "2026-06-29T06:16:03Z",
+      "updatedAt": "2026-10-22T12:42:53Z",
       "baseRepository": "NiYuan224/draft-ni-oauth-batch-authorization-delegation",
       "baseRefName": "main",
       "baseRefOid": "f4aab550427329ae54db01388f2909db99477b33",
@@ -105,6 +122,34 @@
           ]
         }
       ]
+    },
+    {
+      "number": 3,
+      "id": "PR_kwDOS4b4z88AAAABKBYiWw",
+      "title": "Clarify Token Exchange Processing and Token Lifetime Requirements",
+      "url": "https://github.com/NiYuan224/draft-ni-oauth-batch-authorization-delegation/pull/3",
+      "state": "MERGED",
+      "author": "NiYuan224",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "This PR clarifies the Batch Token and Downscoped Token processing rules.\n\n1. Define the Batch Token expiration as the lifetime of the batch authorization.\n2. Clarify Batch Token validation and Sub-Client authentication methods.\n3. Clarify optional actor_token validation and may_act.sub matching during token exchange.\n4. Require Downscoped Tokens to expire no later than the Batch Token.\n5. Update the corresponding token exchange examples.",
+      "createdAt": "2026-10-22T12:40:33Z",
+      "updatedAt": "2026-10-22T12:43:08Z",
+      "baseRepository": "NiYuan224/draft-ni-oauth-batch-authorization-delegation",
+      "baseRefName": "main",
+      "baseRefOid": "a85b2ed8db642d4b0f1df5b8e292538274beef5d",
+      "headRepository": "NiYuan224/draft-ni-oauth-batch-authorization-delegation",
+      "headRefName": "NiYuan224-patch-1",
+      "headRefOid": "8631f770fb5da2e5710adea853f50eedec595913",
+      "closedAt": "2026-10-22T12:41:25Z",
+      "mergedAt": "2026-10-22T12:41:25Z",
+      "mergedBy": "NiYuan224",
+      "mergeCommit": {
+        "oid": "25a0a7039296f9c3a564789922ef966178da0283"
+      },
+      "comments": [],
+      "reviews": []
     }
   ]
 }
