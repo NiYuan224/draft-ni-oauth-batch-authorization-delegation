@@ -44,6 +44,7 @@ normative:
   RFC8693:
   RFC7523:
   RFC9068:
+  RFC7662:
 
 informative:
   I-D.ietf-oauth-identity-chaining:
@@ -51,6 +52,10 @@ informative:
   I-D.ietf-wimse-wpt:
   I-D.ietf-wimse-http-signature:
   I-D.ietf-wimse-mutual-tls:
+  SSF:
+    title: OpenID Shared Signals Framework Specification 1.0
+    date: 2025-08
+    target: https://openid.net/specs/openid-sharedsignals-framework-1_0.html
 
 ...
 
@@ -266,6 +271,9 @@ Subsequently, the AS generates a Batch Token and returns it to the Leader-Client
 **exp**<br>
 **REQUIRED.** The expiration time of the Batch Token, which also defines the expiration of the batch authorization.
 
+**batch_id**<br>
+**REQUIRED.** An identifier for the batch authorization. The same identifier MUST be included in the Batch Token and all Downscoped Tokens derived from that batch authorization.
+
 Figure 3 shows an example of the Batch Token JWT payload, which encapsulates all consented authorization items from Figure 2. The `sub` claim identifies the user who consents, the `client_id` claim identifies the travel assistant as the Leader-Client that initiates the request, each `may_act.sub` field identifies the Sub-Client authorized to exercise the corresponding permission. The `aud` claim is set to the AS itself, as the Batch Token will be presented back to the AS for further token exchange.
 
 ~~~
@@ -277,6 +285,7 @@ Figure 3 shows an example of the Batch Token JWT payload, which encapsulates all
   "exp": 1777881600,
   "iat": 1777795200,
   "jti": "batch-token-8b4729cc-32e4-4370-8cf0-5796154d1296",
+  "batch_id": "batch-auth-8b4729cc-32e4-4370-8cf0-5796154d1296"
   "authorization_details": [
     {
       "type": "flight_booking",
@@ -325,7 +334,6 @@ When a Sub-Client receives a Batch Token from the Leader-Client, it MUST perform
 **REQUIRED.** if `actor_token` is present. The type of the provided `actor_token`, as defined in {{RFC8693}}.
 
 
-
 Figure 4 shows a token exchange request initiated by the Flight-Agent. The Flight-Agent provides the Batch Token as the `subject_token` and its identity token as the `actor_token`. The AS validates both tokens and  matches the party identified in the `actor_token` against `may_act.sub` to select the authorized items assigned to the Flight-Agent. When no `actor_token` is provided, the AS uses the authenticated Sub-Client's identity instead.
 
 ~~~
@@ -370,6 +378,10 @@ Upon receiving a token exchange request, the AS MUST:
 
 * Retrieve the `authorization_details` from the validated Batch Token and select only those authorization items whose `may_act.sub` exactly matches the authenticated Sub-Client's identity or the party identified in the actor_token, if provided. If no authorization items match, the AS MUST reject the request.
 
+* The AS MUST preserve the `batch_id` when issuing a Downscoped Token. For JWT Downscoped Tokens, the AS MUST include the `batch_id` claim. For other token formats, the AS MUST maintain an equivalent association.
+
+* If shared constraints apply to a batch authorization, such as a total spending limit, a maximum number of transactions, or a total usage quota, the AS MUST enforce them across all Downscoped Tokens associated with the same `batch_id`.
+
 ### Downscoped Token Claims
 
 The AS generates a Downscoped Token that only contains the permissions in the filtered authorization items. The format of this token MAY be a JWT access token conforming to {{RFC9068}} or any other format at the AS's discretion. If a JWT Downscoped Token is used, the following constraints on its claim values apply:
@@ -388,6 +400,11 @@ The AS generates a Downscoped Token that only contains the permissions in the fi
 
 **exp**<br>
 **REQUIRED.** The expiration time of the Downscoped Token, which MUST NOT exceed the expiration time (`exp`) of the Batch Token.
+
+**batch_id**<br>
+**REQUIRED.** The identifier of the batch authorization from which
+the Downscoped Token is derived. It MUST match the `batch_id` of
+the corresponding Batch Token.
 
 Figure 6 shows a Downscoped Token issued to the Flight-Agent after token exchange. Its `sub` claim identifies the end‑user who grants the consent, its `aud` claim points directly to target service (https://example.com/flights), and the `client_id` identifies the Flight-Agent. The `authorization_details` array contains only the flight‑booking permission, with the `may_act` field removed.
 
@@ -583,7 +600,9 @@ In some deployments, the user, the leader‑client, and the sub‑clients may ea
 
 # Security Considerations
 
-TODO Security
+## Batch Authorization Revocation
+
+The `batch_id` enables the AS to identify Downscoped Tokens derived from the same batch authorization when that authorization is revoked. The `batch_id` itself does not invalidate these tokens. The AS MUST use the `batch_id` to identify the affected tokens and apply an appropriate revocation mechanism to them. Deployments MAY use token introspection {{RFC7662}} or Token Status List to support token status checking, and event-based mechanisms such as the Shared Signals Framework {{SSF}} to propagate revocation notifications.
 
 
 # IANA Considerations
