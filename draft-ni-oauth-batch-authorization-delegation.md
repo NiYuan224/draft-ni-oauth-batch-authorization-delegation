@@ -417,6 +417,7 @@ Figure 6 shows a Downscoped Token issued to the Flight-Agent after token exchang
   "exp": 1777881600,
   "iat": 1777795210,
   "jti": "downscoped-token-7c8d9a2e-4b12-4a3f-8e6c-2f9a8b3c7d5e",
+  "batch_id": "batch-auth-8b4729cc-32e4-4370-8cf0-5796154d1296"
   "authorization_details": [
     {
       "type": "flight_booking",
@@ -538,6 +539,7 @@ The Batch Token contains two authorization items: one for searching and calculat
   "exp": 1777881600,
   "iat": 1777795200,
   "jti": "4a7b203c-e591-4916-b8df-d2b389f4621c",
+  "batch_id": "batch-8b4729cc-32e4-4370-8cf0-5796154d1296"
   "authorization_details": [
     {
       "type": "benefit_bank_a",
@@ -576,6 +578,7 @@ In accordance with step (b), the Finance Alliance AS inspects the `may_act` fiel
   "client_id": "finance_assistant@alliance.example.com",
   "iat": 1777795210,
   "exp": 1777795300,
+  "batch_id": "batch-8b4729cc-32e4-4370-8cf0-5796154d1296"
   "authorization_details": [
     {
       "type": "benefit_bank_a",
