@@ -5,7 +5,7 @@
 Network Working Group                                              Y. Ni
 Internet-Draft                                                 C. P. Liu
 Intended status: Informational                                    Huawei
-Expires: 25 April 2027                                   22 October 2026
+Expires: 28 April 2027                                   25 October 2026
 
 
                      Batch Authorization Delegation
@@ -48,7 +48,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 25 April 2027.
+   This Internet-Draft will expire on 28 April 2027.
 
 Copyright Notice
 
@@ -87,6 +87,7 @@ Table of Contents
      4.3.  Batch Authorization Delegation with the Cross-Domain User
      4.4.  Combined Cross-Domain Scenario
    5.  Security Considerations
+     5.1.  Batch Authorization Revocation
    6.  IANA Considerations
    7.  References
      7.1.  Normative References
@@ -482,6 +483,11 @@ Table of Contents
    *REQUIRED.* The expiration time of the Batch Token, which also
    defines the expiration of the batch authorization.
 
+   *batch_id*
+   *REQUIRED.* An identifier for the batch authorization.  The same
+   identifier MUST be included in the Batch Token and all Downscoped
+   Tokens derived from that batch authorization.
+
    Figure 3 shows an example of the Batch Token JWT payload, which
    encapsulates all consented authorization items from Figure 2.  The
    sub claim identifies the user who consents, the client_id claim
@@ -499,6 +505,7 @@ Table of Contents
      "exp": 1777881600,
      "iat": 1777795200,
      "jti": "batch-token-8b4729cc-32e4-4370-8cf0-5796154d1296",
+     "batch_id": "batch-auth-8b4729cc-32e4-4370-8cf0-5796154d1296"
      "authorization_details": [
        {
          "type": "flight_booking",
@@ -614,6 +621,16 @@ Table of Contents
       party identified in the actor_token, if provided.  If no
       authorization items match, the AS MUST reject the request.
 
+   *  The AS MUST preserve the batch_id when issuing a Downscoped Token.
+      For JWT Downscoped Tokens, the AS MUST include the batch_id claim.
+      For other token formats, the AS MUST maintain an equivalent
+      association.
+
+   *  If shared constraints apply to a batch authorization, such as a
+      total spending limit, a maximum number of transactions, or a total
+      usage quota, the AS MUST enforce them across all Downscoped Tokens
+      associated with the same batch_id.
+
 3.3.3.  Downscoped Token Claims
 
    The AS generates a Downscoped Token that only contains the
@@ -642,6 +659,11 @@ Table of Contents
    *exp*
    *REQUIRED.* The expiration time of the Downscoped Token, which MUST
    NOT exceed the expiration time (exp) of the Batch Token.
+
+   *batch_id*
+   *REQUIRED.* The identifier of the batch authorization from which the
+   Downscoped Token is derived.  It MUST match the batch_id of the
+   corresponding Batch Token.
 
    Figure 6 shows a Downscoped Token issued to the Flight-Agent after
    token exchange.  Its sub claim identifies the end-user who grants the
@@ -902,7 +924,16 @@ Table of Contents
 
 5.  Security Considerations
 
-   TODO Security
+5.1.  Batch Authorization Revocation
+
+   The batch_id enables the AS to identify Downscoped Tokens derived
+   from the same batch authorization when that authorization is revoked.
+   The batch_id itself does not invalidate these tokens.  The AS MUST
+   use the batch_id to identify the affected tokens and apply an
+   appropriate revocation mechanism to them.  Deployments MAY use token
+   introspection [RFC7662] or Token Status List to support token status
+   checking, and event-based mechanisms such as the Shared Signals
+   Framework [SSF] to propagate revocation notifications.
 
 6.  IANA Considerations
 
@@ -925,6 +956,10 @@ Table of Contents
               (JWT) Profile for OAuth 2.0 Client Authentication and
               Authorization Grants", RFC 7523, DOI 10.17487/RFC7523, May
               2015, <https://www.rfc-editor.org/rfc/rfc7523>.
+
+   [RFC7662]  Richer, J., Ed., "OAuth 2.0 Token Introspection",
+              RFC 7662, DOI 10.17487/RFC7662, October 2015,
+              <https://www.rfc-editor.org/rfc/rfc7662>.
 
    [RFC8174]  Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC
               2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
@@ -972,9 +1007,9 @@ Table of Contents
    [I-D.ietf-wimse-mutual-tls]
               Salowey, J. A. and Y. Rosomakho, "Workload Authentication
               Using Mutual TLS", Work in Progress, Internet-Draft,
-              draft-ietf-wimse-mutual-tls-02, 6 July 2026,
+              draft-ietf-wimse-mutual-tls-03, 24 October 2026,
               <https://datatracker.ietf.org/doc/html/draft-ietf-wimse-
-              mutual-tls-02>.
+              mutual-tls-03>.
 
    [I-D.ietf-wimse-wpt]
               Campbell, B. and A. Schwenkschuster, "WIMSE Workload Proof
@@ -982,6 +1017,10 @@ Table of Contents
               wimse-wpt-02, 27 August 2026,
               <https://datatracker.ietf.org/doc/html/draft-ietf-wimse-
               wpt-02>.
+
+   [SSF]      "OpenID Shared Signals Framework Specification 1.0",
+              August 2025, <https://openid.net/specs/openid-
+              sharedsignals-framework-1_0.html>.
 
 Acknowledgments
 
