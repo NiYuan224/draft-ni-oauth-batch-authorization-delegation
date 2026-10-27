@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-10-25T03:43:36.305417+00:00",
+  "timestamp": "2026-10-27T04:10:11.817922+00:00",
   "repo": "NiYuan224/draft-ni-oauth-batch-authorization-delegation",
   "labels": [
     {
@@ -53,7 +53,7 @@
     {
       "number": 2,
       "id": "I_kwDOS4b4z88AAAABZCxWNw",
-      "title": "Introduce a Batch Authorization Identifier to Link Batch Tokens and Derived Downscoped Tokens",
+      "title": "Introduce a Batch Authorization Identifier to Link the Batch Token and Derived Downscoped Tokens",
       "url": "https://github.com/NiYuan224/draft-ni-oauth-batch-authorization-delegation/issues/2",
       "state": "OPEN",
       "author": "NiYuan224",
@@ -62,7 +62,23 @@
       "labels": [],
       "body": "The draft does not define a common identifier linking Downscoped Tokens derived from the same Batch Token.\n\nA common identifier would enable:\n\n1. Token correlation: Identify all Downscoped Tokens derived from the same batch authorization.\n2. Shared constraints: Associate multiple Downscoped Tokens with common authorization constraints. For example, in UC8 of [draft-chen-oauth-agent-authz-use-cases](https://datatracker.ietf.org/doc/html/draft-chen-oauth-agent-authz-use-cases-04#section-4.2.3), a travel assistant delegates flight and hotel bookings to separate agents under a total budget of 100. A common identifier would allow both tokens to reference the same budget constraint.\n3. Batch revocation: Identify all affected Downscoped Tokens when the batch authorization is revoked.\n\n\n### TODO\nIntroduce a `batch_id` claim in the Batch Token and require the AS to associate each derived Downscoped Token with the same `batch_id` during Token Exchange. For JWT Downscoped Tokens, the `batch_id` claim can be included directly; for other token formats, the AS can maintain an equivalent association.\n",
       "createdAt": "2026-10-22T08:11:51Z",
-      "updatedAt": "2026-10-22T12:55:08Z",
+      "updatedAt": "2026-10-25T15:25:00Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 4,
+      "id": "I_kwDOS4b4z88AAAABZxmiEQ",
+      "title": "Clarify Authorization Remediation During Delegated Task Execution",
+      "url": "https://github.com/NiYuan224/draft-ni-oauth-batch-authorization-delegation/issues/4",
+      "state": "OPEN",
+      "author": "NiYuan224",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "During the 10.19 OAuth WG interim meeting, WG co-chair Hannes Tschofenig raised the question of how a Sub-Client should obtain additional authorization when its existing permissions are insufficient: should it request authorization directly or ask the Leader-Client to coordinate the request?\n\nI believe this is a general issue in delegated interactions, including client-to-agent and agent-to-agent scenarios.\n\nA2A [Section 7.6](https://github.com/a2aproject/A2A/blob/main/docs/specification.md#76-in-task-authorization) supports both direct authorization and requesting assistance from an upstream client , including further propagation through agent chains. \n\n##TODO\n\nClarify that a Sub-Client may request additional authorization directly or seek assistance from the Leader-Client, following the approaches described in A2A. The mechanism for propagating additional authorization requirements across delegation relationships is outside the scope of this document and may be addressed in a separate document.\n\n",
+      "createdAt": "2026-10-25T12:59:39Z",
+      "updatedAt": "2026-10-25T12:59:39Z",
       "closedAt": null,
       "comments": []
     }
@@ -148,6 +164,32 @@
       "mergeCommit": {
         "oid": "25a0a7039296f9c3a564789922ef966178da0283"
       },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 5,
+      "id": "PR_kwDOS4b4z88AAAABKmXzRA",
+      "title": "Introduce a Batch Authorization Identifier to Link the Batch Token and Derived Downscoped Tokens",
+      "url": "https://github.com/NiYuan224/draft-ni-oauth-batch-authorization-delegation/pull/5",
+      "state": "OPEN",
+      "author": "NiYuan224",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "This PR addresses Issue #2 by introducing a `batch_id` to associate Downscoped Tokens derived from the same batch authorization.\r\n\r\nThe changes:\r\n\r\n1. Define the `batch_id` claim in the Batch Token and require the same identifier to be associated with all derived Downscoped Tokens.\r\n\r\n2. Require the AS to use the same `batch_id` from the Batch Token in all derived Downscoped Tokens. For JWT Downscoped Tokens, the AS MUST include the `batch_id` claim with the same value as in the Batch Token; for non-JWT tokens, the AS MUST maintain an equivalent association. The AS MUST enforce shared constraints across all relevant Downscoped Tokens associated with the same `batch_id`.\r\n\r\n3. Add Security Considerations describing how `batch_id` supports identifying affected Downscoped Tokens when a batch authorization is revoked.",
+      "createdAt": "2026-10-25T15:57:34Z",
+      "updatedAt": "2026-10-25T15:58:13Z",
+      "baseRepository": "NiYuan224/draft-ni-oauth-batch-authorization-delegation",
+      "baseRefName": "main",
+      "baseRefOid": "25a0a7039296f9c3a564789922ef966178da0283",
+      "headRepository": "NiYuan224/draft-ni-oauth-batch-authorization-delegation",
+      "headRefName": "NiYuan224-patch-1",
+      "headRefOid": "3c8d2f0e3a1ac02fb3ebc3c127047e9619a355c9",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
       "comments": [],
       "reviews": []
     }
