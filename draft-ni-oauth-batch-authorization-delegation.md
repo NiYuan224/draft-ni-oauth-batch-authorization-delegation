@@ -520,13 +520,13 @@ Steps (1)-(4) are the same as in Figure 1.
 
 (d) The Leader-Client in Domain A presents the JAG for the specific Sub-Client as an assertion to the AS of Domain B.
 
-(e) The AS in Domain B validates the JAG and issues an access token to the Leader-Client. For a JWT access token, the AS MUST include the filtered items in `authorization_details` and preserve the JAG's top-level `may_act` and `batch_id` claims.  For an opaque access token, the AS MUST store the same information in the authorization record associated with the token.
+(e) The AS in Domain B validates the JAG and issues an access token to the Leader-Client. For a JWT access token, the AS MUST include the filtered items in `authorization_details` and preserve the JAG's top-level `may_act` and `batch_id` claims. For an opaque access token, the AS MUST associate the token with the filtered authorization items and the `may_act` and `batch_id` values from the JAG.
 
 (f) The Leader-Client sends the access token to the Sub-Client.
 
 (6) The Sub-Client presents the access token received in step (f) as the `subjec
 
-(7) The AS in Domain B MUST validate the access token and authenticate the requesting Sub-Client. For a JWT access token, `may_act.sub` identifies the designated Sub-Client. For an opaque access token, the AS retrieves the designated Sub-Client's identity from the authorization record created in step (e). The AS MUST reject the request if the authenticated Sub-Client's identity does not exactly match the designated Sub-Client's identity.  
+(7) The AS in Domain B MUST validate the access token and authenticate the requesting Sub-Client. For a JWT access token, `may_act.sub` identifies the designated Sub-Client. For an opaque access token, the AS retrieves the designated Sub-Client's identity from the `may_act` value associated with the token. The AS MUST reject the request if the authenticated Sub-Client's identity does not exactly match the designated Sub-Client's identity.
 
 Steps (8) and (9) follow Figure 1.
 
