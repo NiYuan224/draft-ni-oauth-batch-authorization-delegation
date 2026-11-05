@@ -391,7 +391,7 @@ Upon receiving a token exchange request, the AS MUST:
 The AS generates a Downscoped Token that only contains the permissions in the filtered authorization items. The format of this token MAY be a JWT access token conforming to {{RFC9068}} or any other format at the AS's discretion. If a JWT Downscoped Token is used, the following constraints on its claim values apply:
 
 **sub**<br>
-**REQUIRED.** The owner who grants the consent (copied from the `sub` claim of the Batch Token in the `subject_token` parameter).
+**REQUIRED.** The owner who grants the consent.
 
 **client_id**<br>
 **REQUIRED.** The identifier of the authenticated sub‑client.
