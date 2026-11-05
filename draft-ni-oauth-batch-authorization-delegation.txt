@@ -843,6 +843,11 @@ Table of Contents
 
    Steps (8) and (9) follow Figure 1.
 
+   If the user has different identifiers in the two domains, the AS in
+   Domain A may map the user's sub when issuing the JAG, or the AS in
+   Domain B may map it when issuing the access token, as described in
+   Section 2.5 of [I-D.ietf-oauth-identity-chaining].
+
    By splitting and filtering batch tokens entirely within the Domain A,
    the key advantage of the above mechanism is the AS of Domain B is
    relieved from handling complex batch authorization processing.  This
