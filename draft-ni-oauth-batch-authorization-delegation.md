@@ -57,6 +57,9 @@ informative:
     date: 2025-08
     target: https://openid.net/specs/openid-sharedsignals-framework-1_0.html
   I-D.ietf-oauth-status-list:
+  A2A:
+    title: "Agent2Agent (A2A) Protocol Specification (Release Candidate v1.0)"
+    target: "https://github.com/a2aproject/A2A/blob/v1.0.0/docs/specification.md"
 
 ...
 
@@ -403,9 +406,7 @@ The AS generates a Downscoped Token that only contains the permissions in the fi
 **REQUIRED.** The expiration time of the Downscoped Token, which MUST NOT exceed the expiration time (`exp`) of the Batch Token.
 
 **batch_id**<br>
-**REQUIRED.** The identifier of the batch authorization from which
-the Downscoped Token is derived. It MUST match the `batch_id` of
-the corresponding Batch Token.
+**REQUIRED.** The identifier of the batch authorization from which the Downscoped Token is derived. It MUST match the `batch_id` of the corresponding Batch Token.
 
 Figure 6 shows a Downscoped Token issued to the Flight-Agent after token exchange. Its `sub` claim identifies the end‑user who grants the consent, its `aud` claim points directly to target service (https://example.com/flights), and the `client_id` identifies the Flight-Agent. The `authorization_details` array contains only the flight‑booking permission, with the `may_act` field removed.
 
@@ -429,6 +430,11 @@ Figure 6 shows a Downscoped Token issued to the Flight-Agent after token exchang
 }
 ~~~
 *Figure 6: Downscoped Token Payload*
+
+## Additional Authorization During Task Execution
+
+If a task requires permissions beyond those granted to the Sub-Client in the Batch Token, the Sub-Client may request additional authorization directly or ask the Leader-Client to coordinate the request. How such requests are communicated across delegation relationships is outside the scope of this document. For an example of how to request additional authorization during task
+execution, see the in-task authorization mechanism in Section 7.6 of {{A2A}}.
 
 # Derivative Scenarios
 
