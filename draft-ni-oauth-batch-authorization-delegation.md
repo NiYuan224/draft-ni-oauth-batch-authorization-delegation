@@ -380,7 +380,7 @@ Upon receiving a token exchange request, the AS MUST:
 
 * If an `actor_token` is provided, validate it and verify that the actor's identity matches the authenticated Sub-Client's identity. Reject the request if token validation fails or the two identities do not match.
 
-* Retrieve the `authorization_details` from the validated Batch Token and select only those authorization items whose `may_act.sub` exactly matches the authenticated Sub-Client's identity, if provided. If no authorization items match, the AS MUST reject the request.
+* Retrieve the `authorization_details` from the validated Batch Token and select only those authorization items whose `may_act.sub` exactly matches the authenticated Sub-Client's identity. If no authorization items match, the AS MUST reject the request.
 
 * The AS MUST preserve the `batch_id` when issuing a Downscoped Token. For JWT Downscoped Tokens, the AS MUST include the `batch_id` claim. For other token formats, the AS MUST maintain an equivalent association.
 
@@ -456,7 +456,7 @@ In this case, the workflow and the examples are already given in {{basic}} Figur
 The workflow in this case is a combination of Batch Authorization Delegation and identity chaining {{I-D.ietf-oauth-identity-chaining}}.
 
 
-Since the Sub-Client and Leader-Client reside in different trust domains, the Leader-Client in Domain A requests JWT Authorization Grants (JAGs) from the AS in Domain A via token exchange. The AS in Domain A inspects both the `may_act.aud` and `may_act.sub` fields within the Batch Token, filters and splits the authorization items to generates an actor-specific JAG for each designated Sub-Client.
+Since the Sub-Client and Leader-Client reside in different trust domains, the Leader-Client in Domain A requests JWT Authorization Grants (JAGs) from the AS in Domain A via token exchange. The AS in Domain A inspects both the `may_act.aud` and `may_act.sub` fields within the Batch Token, filters and splits the authorization items to generate an actor-specific JAG for each designated Sub-Client.
 
 Taking the Sub-Client in Domain B as an example, the Leader-Client then presents the corresponding JAG as an assertion to the AS in Domain B to obtain an access token, which is subsequently exchanged by the specific Sub-Client in Domain B for a final Downscoped Token. This token exchange ensures that the final Downscoped Token is bound to the Sub-Client's own identity and contains only the specific permissions it required.
 
@@ -497,6 +497,10 @@ Taking the Sub-Client in Domain B as an example, the Leader-Client then presents
     |            |               |       | exchange   |          |
     |            |               |       | Request    |          |
     |            |               |       <------------|          |
+    |            |               |       |(7)Verify   |          |
+    |            |               |       |+-+ identity|          |
+    |            |               |       |  | &Downscope         |
+    |            |               |       |<-+         |          |
     |            |               |       |(8)Downscope|          |
     |            |               |       | Token      |          |
     |            |               |       +------------>          |
@@ -512,28 +516,32 @@ Steps (1)-(4) are the same as in Figure 1.
 
 (b) The AS of Domain A inspects the may_act fields within the Batch Token, filtering and splitting the authorization items down to each target actor in Domain B.
 
-(c) The AS of Domain A issues actor-specific JAGs, with the nested `may_act` field in the `authorization_details` removed. This step requires trust relationship between the ASs in Domain A and Domain B.  See Section 2.1 of {{I-D.ietf-oauth-identity-chaining}} for the trust relationship establishment.
+(c) The AS in Domain A issues one JAG for each designated Sub-Client. The JAG identifies the target AS in its top-level `aud` claim and the designated Sub-Client in its top-level `may_act` claim. The AS omits `may_act` from the individual authorization items. This step requires a trust relationship between the ASs in Domain A and Domain B.  See Section 2.1 of {{I-D.ietf-oauth-identity-chaining}} for the trust relationship establishment.
 
 (d) The Leader-Client in Domain A presents the JAG for the specific Sub-Client as an assertion to the AS of Domain B.
 
-(e) The AS of Domain B validates the JAG, extracts and encapsulates the filtered authorization items in an access token and sends it to the Leader-Client.
-
+(e) The AS in Domain B validates the JAG, extracts the filtered authorization items, and issues an access token to the Leader-Client. For a JWT access token, the AS MUST include the filtered items in `authorization_details` and preserve the JAG's top-level `may_act` and `batch_id` claims.  For an opaque access token, the AS MUST store the same information in the authorization record associated with the token.
 
 (f) The Leader-Client sends the access token to the Sub-Client.
 
-Steps (6)-(9) are the same as in Figure 1.
+(6) The Sub-Client presents the access token received in step (f) as the `subject_token`.
 
-By splitting and filtering batch tokens entirely within the Domain A, the key advantage of the above mechanism is the AS of Domain B is relieved from handling complex batch authorization processing. This minimizes upgrade overhead for downstream ASs, ensuring rapid and seamless compatibility with existing cross-domain OAuth deployments.
+(7) The AS in Domain B MUST validate the access token and authenticate the requesting Sub-Client. For a JWT access token, `may_act.sub` identifies the designated Sub-Client. For an opaque access token, the AS retrieves the designated Sub-Client's identity from the authorization record created in step (e). The AS MUST reject the request if the authenticated Sub-Client's identity does not exactly match the designated Sub-Client's identity.
+
+Steps (8) and (9) follow Figure 1.
+
+
+By splitting and filtering batch tokens entirely within the Domain A, the key advantage of the above mechanism is the AS of Domain B is relieved from handling complex batch authorization processing. This minimizes upgrade overhead for downstream ASs, ensuring rapid compatibility with existing cross-domain OAuth deployments.
 
 ### Examples
 
-The following shows some typical examples in the workflow of Figure 7, which is correspond to the use case (1) in {{intro}}.
+The following examples illustrate the workflow in Figure 7 for use case (1) in {{intro}}.
 
 #### Batch Token
 
 Figure 8 illustrates a Batch Token payload issued by a leading Chinese Financial Alliance's AS in step (4).
 
-The Batch Token contains two authorization items: one for searching and calculating max availble coupons at Bank_A (benefit_agent), and another for the same actions at Bank_B. The `may_act.aud` field specifies the AS location, while the `may_act.sub` field specifies the designated actor.
+The Batch Token contains two authorization items: one for searching and calculating max available coupons at Bank_A (benefit_agent), and another for the same actions at Bank_B. The `may_act.aud` field specifies the AS location, while the `may_act.sub` field specifies the designated actor.
 
 
 ~~~
@@ -574,7 +582,7 @@ The Batch Token contains two authorization items: one for searching and calculat
 #### JWT Authorization Grant
 Figure 9 shows the JAG payload issued by the Finance Alliance AS in step (c), specifically filtered for Bank_A's benefit_agent.
 
-In accordance with step (b), the Finance Alliance AS inspects the `may_act` fields of the Batch Token (Figure 8), extracts and encapsulates the benefit_bank_a item into the JAG, with the `may_act` field removed.
+The top-level `aud` identifies Bank A's AS. The `sub` member of the top-level `may_act` claim identifies the benefit agent authorized to exchange the access token for a Downscoped Token.
 
 ~~~
 {
@@ -585,11 +593,14 @@ In accordance with step (b), the Finance Alliance AS inspects the `may_act` fiel
   "iat": 1777795210,
   "exp": 1777795300,
   "batch_id": "batch-8b4729cc-32e4-4370-8cf0-5796154d1296",
+  "may_act": {
+      "sub": "benefit_agent@bank_a.example.com"
+    },
   "authorization_details": [
     {
       "type": "benefit_bank_a",
       "actions": ["search", "calculate"],
-      "locations": ["https://bank_a.example.com/benefits"],
+      "locations": ["https://bank_a.example.com/benefits"]
     }
   ]
 }
@@ -598,7 +609,7 @@ In accordance with step (b), the Finance Alliance AS inspects the `may_act` fiel
 
 The subsequent formats of the access token, token exchange requests, and downscoped tokens fully reuse the standard profiles defined in Section 3 of {{I-D.ietf-oauth-identity-chaining}}, and are therefore omitted here.
 
-Noting that in step (e) of Figure 7, The AS in Domain B MUST preserve the `batch_id` association when issuing the access token. In step (8) of Figure 7, The association MUST also be preserved when the Sub-Client subsequently obtains a Downscoped Token through Token Exchange.
+In step (e) of Figure 7, The AS in Domain B MUST preserve the `batch_id` association when issuing the access token. In step (8) of Figure 7, The association MUST also be preserved when the Sub-Client subsequently obtains a Downscoped Token through Token Exchange.
 
 
 ## Batch Authorization Delegation with the Cross-Domain User
