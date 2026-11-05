@@ -749,10 +749,8 @@ Table of Contents
    Taking the Sub-Client in Domain B as an example, the Leader-Client
    then presents the corresponding JAG as an assertion to the AS in
    Domain B to obtain an access token, which is subsequently exchanged
-   by the specific Sub-Client in Domain B for a final Downscoped Token.
-   This token exchange ensures that the final Downscoped Token is bound
-   to the Sub-Client's own identity and contains only the specific
-   permissions it required.
+   by the specific Sub-Client in Domain B for a final Downscoped Token
+   with only the permissions assigned to that Sub-Client.
 
  +--------++-------------+  +--------++--------+ +----------+ +--------+
  |  User  ||Leader-Client|  |   AS   ||   AS   | |Sub-Client| |   RS   |
@@ -833,8 +831,8 @@ Table of Contents
 
    (f) The Leader-Client sends the access token to the Sub-Client.
 
-   (6) The Sub-Client presents the access token received in step (f) as
-   the `subjec
+   (6) The Sub-Client presents the access token received in step (f) to
+   the AS in Domain B as the subject_token in a token exchange request.
 
    (7) The AS in Domain B MUST validate the access token and
    authenticate the requesting Sub-Client.  For a JWT access token,
@@ -931,11 +929,6 @@ Table of Contents
    }
 
    _Figure 9: JAG Payload_
-
-   The subsequent formats of the access token, token exchange requests,
-   and downscoped tokens fully reuse the standard profiles defined in
-   Section 3 of [I-D.ietf-oauth-identity-chaining], and are therefore
-   omitted here.
 
    In step (e) of Figure 7, The AS in Domain B MUST preserve the
    batch_id association when issuing the access token.  In step (8) of
