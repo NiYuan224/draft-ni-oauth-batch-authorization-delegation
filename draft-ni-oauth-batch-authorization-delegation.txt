@@ -642,8 +642,7 @@ Table of Contents
    the following constraints on its claim values apply:
 
    *sub*
-   *REQUIRED.* The owner who grants the consent (copied from the sub
-   claim of the Batch Token in the subject_token parameter).
+   *REQUIRED.* The owner who grants the consent.
 
    *client_id*
    *REQUIRED.* The identifier of the authenticated sub-client.
