@@ -1564,10 +1564,10 @@ svg {
               </ul>
 </li>
             <li class="normal" id="section-3.3.2-2.3">
-              <p id="section-3.3.2-2.3.1">If an <code>actor_token</code> is provided, validate it and identify the party represented by the token.<a href="#section-3.3.2-2.3.1" class="pilcrow">¶</a></p>
+              <p id="section-3.3.2-2.3.1">If an <code>actor_token</code> is provided, validate it and verify that the actor's identity matches the authenticated Sub-Client's identity. Reject the request if token validation fails or the two identities do not match.<a href="#section-3.3.2-2.3.1" class="pilcrow">¶</a></p>
 </li>
             <li class="normal" id="section-3.3.2-2.4">
-              <p id="section-3.3.2-2.4.1">Retrieve the <code>authorization_details</code> from the validated Batch Token and select only those authorization items whose <code>may_act.sub</code> exactly matches the authenticated Sub-Client's identity or the party identified in the actor_token, if provided. If no authorization items match, the AS MUST reject the request.<a href="#section-3.3.2-2.4.1" class="pilcrow">¶</a></p>
+              <p id="section-3.3.2-2.4.1">Retrieve the <code>authorization_details</code> from the validated Batch Token and select only those authorization items whose <code>may_act.sub</code> exactly matches the authenticated Sub-Client's identity, if provided. If no authorization items match, the AS MUST reject the request.<a href="#section-3.3.2-2.4.1" class="pilcrow">¶</a></p>
 </li>
             <li class="normal" id="section-3.3.2-2.5">
               <p id="section-3.3.2-2.5.1">The AS MUST preserve the <code>batch_id</code> when issuing a Downscoped Token. For JWT Downscoped Tokens, the AS MUST include the <code>batch_id</code> claim. For other token formats, the AS MUST maintain an equivalent association.<a href="#section-3.3.2-2.5.1" class="pilcrow">¶</a></p>
