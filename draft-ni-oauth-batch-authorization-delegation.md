@@ -378,9 +378,9 @@ Upon receiving a token exchange request, the AS MUST:
   * JWT-based client authentication as defined in {{RFC7523}}.
   * WIMSE-based authentication methods as defined in {{I-D.ietf-wimse-wpt}}, {{I-D.ietf-wimse-http-signature}}, and {{I-D.ietf-wimse-mutual-tls}}.
 
-* If an `actor_token` is provided, validate it and identify the party represented by the token.
+* If an `actor_token` is provided, validate it and verify that the actor's identity matches the authenticated Sub-Client's identity. Reject the request if token validation fails or the two identities do not match.
 
-* Retrieve the `authorization_details` from the validated Batch Token and select only those authorization items whose `may_act.sub` exactly matches the authenticated Sub-Client's identity or the party identified in the actor_token, if provided. If no authorization items match, the AS MUST reject the request.
+* Retrieve the `authorization_details` from the validated Batch Token and select only those authorization items whose `may_act.sub` exactly matches the authenticated Sub-Client's identity, if provided. If no authorization items match, the AS MUST reject the request.
 
 * The AS MUST preserve the `batch_id` when issuing a Downscoped Token. For JWT Downscoped Tokens, the AS MUST include the `batch_id` claim. For other token formats, the AS MUST maintain an equivalent association.
 
