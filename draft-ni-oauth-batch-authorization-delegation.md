@@ -433,8 +433,7 @@ Figure 6 shows a Downscoped Token issued to the Flight-Agent after token exchang
 
 ## Additional Authorization During Task Execution
 
-If a task requires permissions beyond those granted to the Sub-Client in the Batch Token, the Sub-Client may request additional authorization directly or ask the Leader-Client to coordinate the request. How such requests are communicated across delegation relationships is outside the scope of this document. For an example of how to request additional authorization during task
-execution, see the in-task authorization mechanism in Section 7.6 of {{A2A}}.
+If the Sub-Client needs additional permissions to access a resource during task execution, it may request authorization for those permissions directly or ask the Leader-Client to coordinate the request. How such requests are communicated across delegation relationships is outside the scope of this document. For an example, see the in-task authorization mechanism in Section 7.6 of {{A2A}}.
 
 # Derivative Scenarios
 
