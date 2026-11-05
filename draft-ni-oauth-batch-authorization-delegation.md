@@ -191,7 +191,7 @@ This mechanism offers two key advantages.
 
 * First, it fully reuses existing standards, combining RAR's flexible permission definitions with Token Exchange's delegation semantics by simply moving the `may_act` claim from the entity level down to individual authorization items without altering its original meaning. This slight change effectively fulfills the expression, partition, and delegation purpose of fine-grained structured permissions across multiple collaborating entities.
 
-* Second, the final Downscoped Token introduces no new claims or structural changes. Since RS deployments are often numerous and costly to upgrade, this design ensures zero modification to existing RSs, enabling smooth adoption with minimal reconfiguration.
+* Second, the AS filters the authorization items before issuing the Downscoped Token. The RS therefore needs to process only the permissions assigned to the requesting Sub-Client, enabling smooth adoption with minimal reconfiguration.
 
 ## Batch Token
 
@@ -384,7 +384,7 @@ Upon receiving a token exchange request, the AS MUST:
 
 * The AS MUST preserve the `batch_id` when issuing a Downscoped Token. For JWT Downscoped Tokens, the AS MUST include the `batch_id` claim. For other token formats, the AS MUST maintain an equivalent association.
 
-* If shared constraints apply to a batch authorization, such as a total spending limit, a maximum number of transactions, or a total usage quota, the AS MUST enforce them across all Downscoped Tokens associated with the same `batch_id`.
+* If shared constraints apply to a batch authorization, the AS MUST enforce them across all Downscoped Tokens associated with the same `batch_id` when issuing a Downscoped Token. Examples include a total spending limit, a maximum number of transactions, and a total usage quota.
 
 ### Downscoped Token Claims
 
@@ -397,7 +397,7 @@ The AS generates a Downscoped Token that only contains the permissions in the fi
 **REQUIRED.** The identifier of the authenticated sub‑client.
 
 **aud**<br>
-**OPTIONAL.** The target RS where the Sub-Client intends to use the Downscoped Token.
+**REQUIRED.** The target RS where the Sub-Client intends to use the Downscoped Token.
 
 **authorization_details**<br>
 **OPTIONAL.** A JSON array containing the permissions from the filtered authorization items. Since the `may_act` field has already been enforced as a designated actor by the AS during token exchange, it MAY be omitted in the Downscoped Token.
@@ -485,7 +485,7 @@ Taking the Sub-Client in Domain B as an example, the Leader-Client then presents
     |            |   &Downscope  |       |            |          |
     |            |             +-+       |            |          |
     |            |             | |       |            |          |
-    |            |(c)JAGs      +->       |            |          |
+    |            |(c)JAG       +->       |            |          |
     |            <---------------+       |            |          |
     |            |(d)JAG         |       |            |          |
     |            +---------------+------->            |          |
