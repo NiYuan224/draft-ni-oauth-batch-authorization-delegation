@@ -1351,7 +1351,7 @@ svg {
             <p id="section-3.1-14.1.1">First, it fully reuses existing standards, combining RAR's flexible permission definitions with Token Exchange's delegation semantics by simply moving the <code>may_act</code> claim from the entity level down to individual authorization items without altering its original meaning. This slight change effectively fulfills the expression, partition, and delegation purpose of fine-grained structured permissions across multiple collaborating entities.<a href="#section-3.1-14.1.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-3.1-14.2">
-            <p id="section-3.1-14.2.1">Second, the final Downscoped Token introduces no new claims or structural changes. Since RS deployments are often numerous and costly to upgrade, this design ensures zero modification to existing RSs, enabling smooth adoption with minimal reconfiguration.<a href="#section-3.1-14.2.1" class="pilcrow">¶</a></p>
+            <p id="section-3.1-14.2.1">Second, the AS filters the authorization items before issuing the Downscoped Token. The RS therefore needs to process only the permissions assigned to the requesting Sub-Client, enabling smooth adoption with minimal reconfiguration.<a href="#section-3.1-14.2.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 </section>
@@ -1573,7 +1573,7 @@ svg {
               <p id="section-3.3.2-2.5.1">The AS MUST preserve the <code>batch_id</code> when issuing a Downscoped Token. For JWT Downscoped Tokens, the AS MUST include the <code>batch_id</code> claim. For other token formats, the AS MUST maintain an equivalent association.<a href="#section-3.3.2-2.5.1" class="pilcrow">¶</a></p>
 </li>
             <li class="normal" id="section-3.3.2-2.6">
-              <p id="section-3.3.2-2.6.1">If shared constraints apply to a batch authorization, such as a total spending limit, a maximum number of transactions, or a total usage quota, the AS MUST enforce them across all Downscoped Tokens associated with the same <code>batch_id</code>.<a href="#section-3.3.2-2.6.1" class="pilcrow">¶</a></p>
+              <p id="section-3.3.2-2.6.1">If shared constraints apply to a batch authorization, the AS MUST enforce them across all Downscoped Tokens associated with the same <code>batch_id</code> when issuing a Downscoped Token. Examples include a total spending limit, a maximum number of transactions, and a total usage quota.<a href="#section-3.3.2-2.6.1" class="pilcrow">¶</a></p>
 </li>
           </ul>
 </section>
@@ -1589,7 +1589,7 @@ svg {
 <p id="section-3.3.3-3"><strong>client_id</strong><br>
             <strong>REQUIRED.</strong> The identifier of the authenticated sub‑client.<a href="#section-3.3.3-3" class="pilcrow">¶</a></p>
 <p id="section-3.3.3-4"><strong>aud</strong><br>
-            <strong>OPTIONAL.</strong> The target RS where the Sub-Client intends to use the Downscoped Token.<a href="#section-3.3.3-4" class="pilcrow">¶</a></p>
+            <strong>REQUIRED.</strong> The target RS where the Sub-Client intends to use the Downscoped Token.<a href="#section-3.3.3-4" class="pilcrow">¶</a></p>
 <p id="section-3.3.3-5"><strong>authorization_details</strong><br>
             <strong>OPTIONAL.</strong> A JSON array containing the permissions from the filtered authorization items. Since the <code>may_act</code> field has already been enforced as a designated actor by the AS during token exchange, it MAY be omitted in the Downscoped Token.<a href="#section-3.3.3-5" class="pilcrow">¶</a></p>
 <p id="section-3.3.3-6"><strong>exp</strong><br>
@@ -1699,7 +1699,7 @@ svg {
     |            |   &amp;Downscope  |       |            |          |
     |            |             +-+       |            |          |
     |            |             | |       |            |          |
-    |            |(c)JAGs      +-&gt;       |            |          |
+    |            |(c)JAG       +-&gt;       |            |          |
     |            &lt;---------------+       |            |          |
     |            |(d)JAG         |       |            |          |
     |            +---------------+-------&gt;            |          |
