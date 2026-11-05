@@ -78,6 +78,7 @@ Table of Contents
        3.3.1.  Token Exchange Request
        3.3.2.  Processing Rules of the Authorization Server
        3.3.3.  Downscoped Token Claims
+     3.4.  Additional Authorization During Task Execution
    4.  Derivative Scenarios
      4.1.  Single-Domain Batch Authorization Delegation
      4.2.  Batch Authorization Delegation with Cross-Domain
@@ -692,6 +693,15 @@ Table of Contents
 
    _Figure 6: Downscoped Token Payload_
 
+3.4.  Additional Authorization During Task Execution
+
+   If the Sub-Client needs additional permissions to access a resource
+   during task execution, it may request authorization for those
+   permissions directly or ask the Leader-Client to coordinate the
+   request.  How such requests are communicated across delegation
+   relationships is outside the scope of this document.  For an example,
+   see the in-task authorization mechanism in Section 7.6 of [A2A].
+
 4.  Derivative Scenarios
 
    Until now, the main procedures of the Batch Authorization Delegation
@@ -990,6 +1000,11 @@ Table of Contents
               <https://www.rfc-editor.org/rfc/rfc9396>.
 
 7.2.  Informative References
+
+   [A2A]      "Agent2Agent (A2A) Protocol Specification (Release
+              Candidate v1.0)", n.d.,
+              <https://github.com/a2aproject/A2A/blob/v1.0.0/docs/
+              specification.md>.
 
    [I-D.ietf-oauth-identity-assertion-authz-grant]
               Parecki, A., McGuinness, K., and B. Campbell, "Identity
