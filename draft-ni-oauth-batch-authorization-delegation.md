@@ -458,7 +458,7 @@ The workflow in this case is a combination of Batch Authorization Delegation and
 
 Since the Sub-Client and Leader-Client reside in different trust domains, the Leader-Client in Domain A requests JWT Authorization Grants (JAGs) from the AS in Domain A via token exchange. The AS in Domain A inspects both the `may_act.aud` and `may_act.sub` fields within the Batch Token, filters and splits the authorization items to generate an actor-specific JAG for each designated Sub-Client.
 
-Taking the Sub-Client in Domain B as an example, the Leader-Client then presents the corresponding JAG as an assertion to the AS in Domain B to obtain an access token, which is subsequently exchanged by the specific Sub-Client in Domain B for a final Downscoped Token. This token exchange ensures that the final Downscoped Token is bound to the Sub-Client's own identity and contains only the specific permissions it required.
+Taking the Sub-Client in Domain B as an example, the Leader-Client then presents the corresponding JAG as an assertion to the AS in Domain B to obtain an access token, which is subsequently exchanged by the specific Sub-Client in Domain B for a final Downscoped Token with only the permissions assigned to that Sub-Client.
 
 
 ~~~
@@ -524,7 +524,7 @@ Steps (1)-(4) are the same as in Figure 1.
 
 (f) The Leader-Client sends the access token to the Sub-Client.
 
-(6) The Sub-Client presents the access token received in step (f) as the `subjec
+(6) The Sub-Client presents the access token received in step (f) to the AS in Domain B as the ​`subject_token`​ in a token exchange request.
 
 (7) The AS in Domain B MUST validate the access token and authenticate the requesting Sub-Client. For a JWT access token, `may_act.sub` identifies the designated Sub-Client. For an opaque access token, the AS retrieves the designated Sub-Client's identity from the `may_act` value associated with the token. The AS MUST reject the request if the authenticated Sub-Client's identity does not exactly match the designated Sub-Client's identity.
 
@@ -606,8 +606,6 @@ The top-level `aud` identifies Bank A's AS. The `sub` member of the top-level `m
 }
 ~~~
 *Figure 9: JAG Payload*
-
-The subsequent formats of the access token, token exchange requests, and downscoped tokens fully reuse the standard profiles defined in Section 3 of {{I-D.ietf-oauth-identity-chaining}}, and are therefore omitted here.
 
 In step (e) of Figure 7, The AS in Domain B MUST preserve the `batch_id` association when issuing the access token. In step (8) of Figure 7, The association MUST also be preserved when the Sub-Client subsequently obtains a Downscoped Token through Token Exchange.
 
