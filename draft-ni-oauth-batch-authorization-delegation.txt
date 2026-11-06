@@ -5,7 +5,7 @@
 Network Working Group                                              Y. Ni
 Internet-Draft                                                 C. P. Liu
 Intended status: Informational                                    Huawei
-Expires: 9 May 2027                                      5 November 2026
+Expires: 10 May 2027                                     6 November 2026
 
 
                      Batch Authorization Delegation
@@ -48,7 +48,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 9 May 2027.
+   This Internet-Draft will expire on 10 May 2027.
 
 Copyright Notice
 
@@ -977,6 +977,13 @@ Table of Contents
 6.  IANA Considerations
 
    This document has no IANA actions.
+
+   edit from 00: 1.  Clarify Token Exchange Processing Rules and Token
+   Lifetime Requirements- PR #3 2.  Introduce a Batch Authorization
+   Identifier to Link the Batch Token and Derived Downscoped Tokens- PR
+   #5 3.  Clarify Sub Client Additional Authorization during Task
+   Excution PR #6 4.  Clarify how the designated Sub-Client is
+   identified and verified in the cross-domain flow PR #7
 
 7.  References
 
