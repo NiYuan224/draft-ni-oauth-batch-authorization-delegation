@@ -24,7 +24,7 @@ flowchart LR
 ```
 
 
-Batch Authorization Delegation lets an orchestrator agent request permissions for multiple sub-agents in a single authorization request, reducing repeated user approvals while allowing each sub-agent to obtain only the permissions approved for it.
+Batch Authorization Delegation lets an orchestrator agent (Leader Agent) request permissions for multiple sub-agents in a single authorization request, reducing repeated user approvals while allowing each sub-agent to obtain only the permissions approved for it.
 
 This Python demo shows a Personal Assistant (Leader Agent) coordinating Calendar and Email Agents to schedule a meeting and notify attendees. Each sub-agent exchanges the Batch Token for an access token containing only its assigned permissions.
 
