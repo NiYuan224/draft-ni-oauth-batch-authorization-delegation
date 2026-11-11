@@ -60,4 +60,4 @@ python -m unittest -v
 - `view.py`, `page.html`: web interface
 - `test_demo.py`: three core tests; run `python -m unittest -v`
 
-Experimental single-domain demo, related to [Batch Authorization Delegation](https://datatracker.ietf.org/doc/draft-ni-oauth-batch-authorization-delegation/). Consent and token validation use private local endpoints; this is not a complete OAuth implementation. Agents are deterministic Python programs. Select an appropriate license before distributing the code as open source.
+Experimental single-domain demo, related to [Batch Authorization Delegation](https://datatracker.ietf.org/doc/draft-ni-oauth-batch-authorization-delegation/). Consent and token validation use private local endpoints; this is not a complete OAuth implementation. Agents are deterministic Python programs. 
