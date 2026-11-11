@@ -1,6 +1,10 @@
 # Batch Authorization Delegation 
 
-Local Python demo of one Leader requesting permissions for Calendar Agent and Email Agent in one batch. Each agent exchanges the Batch Token for its own access token.
+Batch Authorization Delegation lets an orchestrator agent request permissions for multiple sub-agents in a single authorization request, reducing repeated user approvals while allowing each sub-agent to obtain only the permissions approved for it.
+
+This Python demo shows a Personal Assistant (Leader Agent) coordinating Calendar and Email Agents to schedule a meeting and notify attendees. Each sub-agent exchanges the Batch Token for an access token containing only its assigned permissions.
+
+Run the demo locally to approve both permissions, just one, or neither, and inspect decoded tokens and resource responses through a web interface. Calendar and email operations are simulated; no external services are required.
 
 ## Run
 
