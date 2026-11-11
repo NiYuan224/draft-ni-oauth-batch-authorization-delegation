@@ -4,20 +4,21 @@ Local Python demo of one Leader requesting permissions for Calendar Agent and Em
 
 ## Run
 
-Python 3.12; no third-party dependencies.
+Requires Python 3.11 or later. No third-party dependencies.
+
+Download and extract this repository, then open a terminal in the `demo` directory.
 
 ```sh
 python leader_agent.py
 ```
 
-Windows PowerShell with uv:
+Open http://127.0.0.1:8080/ in your browser and keep the terminal open. Stop with Ctrl+C.
 
-```powershell
-& "$env:USERPROFILE\.local\bin\uv.exe" run --offline --python 3.12 .\leader_agent.py
+To run the tests:
+
+```sh
+python -m unittest -v
 ```
-
-Open http://127.0.0.1:8080/ and keep the terminal open. Enter an email and interview time, select permissions, and submit. The page shows decoded tokens and actual local HTTP responses. The error button sends Calendar Agent’s token to Email RS, which rejects its audience with `401 invalid_token`. Stop with Ctrl+C.
-
 
 
 ## Files
