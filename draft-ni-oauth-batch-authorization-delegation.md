@@ -249,9 +249,9 @@ The lead-client sends an authorization request that contains `authorization_deta
 
   * Grant only a subset of the authorization items.
 
-* The AS MUST record the consented authorization items, including the `may_act` fields, as part of a grant (e.g., the authorization code).
+* The AS MUST assign a unique `batch_id` to identify the batch authorization. The AS MUST record the consented authorization items, including the `may_act` fields, along with the associated `batch_id` as part of a grant.
 
-After user consent, the AS issues an authorization code as a grant to the Leader-Client. The Leader-Client then exchanges the authorization code for a Batch Token, following the standard authorization response and token request flow as defined in {{RFC6749}}.
+After user consent, the AS issues an authorization code representing the grant to the Leader-Client. The Leader-Client then exchanges the authorization code for a Batch Token, following the standard authorization response and token request flow as defined in {{RFC6749}}.
 
 Subsequently, the AS generates a Batch Token and returns it to the Leader-Client in the Token response. The Batch Token is a JWT access token conforming to {{RFC9068}}, with the following claims and values.
 
@@ -276,7 +276,7 @@ Subsequently, the AS generates a Batch Token and returns it to the Leader-Client
 **REQUIRED.** The expiration time of the Batch Token, which also defines the expiration of the batch authorization.
 
 **batch_id**<br>
-**REQUIRED.** An identifier for the batch authorization. The same identifier MUST be used to associate the Batch Token with all Downscoped Tokens derived from that batch authorization.
+**REQUIRED.** A unique identifier assigned by the AS to the batch authorization when the corresponding grant is created. The same identifier MUST be used to associate the Batch Token with all Downscoped Tokens derived from that batch authorization.
 
 Figure 3 shows an example of the Batch Token JWT payload, which encapsulates all consented authorization items from Figure 2. The `sub` claim identifies the user who consents, the `client_id` claim identifies the travel assistant as the Leader-Client that initiates the request, each `may_act.sub` field identifies the Sub-Client authorized to exercise the corresponding permission. The `aud` claim is set to the AS itself, as the Batch Token will be presented back to the AS for further token exchange.
 
