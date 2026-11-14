@@ -61,9 +61,11 @@ class Leader:
             return reader.recv()
 
     def dispatch(self,name,target):
-        url,key=self.workers[name]
-        response=post(url+"/task",{"batch":self.batch["body"]["access_token"],"resource":target,
-                                   "start":self.start,"email":self.email},"Bearer "+key)
+        url,_=self.workers[name]
+        batch_token=self.batch["body"]["access_token"]
+        response=post(url+"/task",{"resource":target,
+                                   "start":self.start,"email":self.email},
+                      "Bearer "+batch_token)
         if response["status"]!=200:
             raise RuntimeError("Worker dispatch failed")
         return response["body"]
