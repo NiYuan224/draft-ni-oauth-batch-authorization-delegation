@@ -392,6 +392,17 @@ Upon receiving a token exchange request, the AS MUST:
 
 * If shared constraints apply to a batch authorization, the AS MUST enforce them across all Downscoped Tokens associated with the same `batch_id` when issuing a Downscoped Token. Examples include a total spending limit, a maximum number of transactions, and a total usage quota.
 
+
+### Error Responses
+
+The AS MUST return error responses for token exchange requests in accordance with Section 2.2.2 of {{RFC8693}}.
+
+* If the token exchange request is invalid, or the `subject_token` or `actor_token` is invalid or unacceptable based on policy, the AS MUST return the `invalid_request` error. This includes the case where no authorization items match the authenticated Sub-Client.
+
+* If the AS is unwilling or unable to issue a token for a target service indicated by the `resource` or `audience` parameter, it SHOULD return the `invalid_target` error.
+
+* If client authentication fails, the AS MUST return the `invalid_client` error as specified in Section 5.2 of {{RFC6749}}.
+  
 ### Downscoped Token Claims
 
 The AS generates a Downscoped Token that only contains the permissions in the filtered authorization items. The format of this token MAY be a JWT access token conforming to {{RFC9068}} or any other format at the AS's discretion. If a JWT Downscoped Token is used, the following constraints on its claim values apply:
