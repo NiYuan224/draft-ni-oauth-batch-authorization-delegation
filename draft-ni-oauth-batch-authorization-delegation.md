@@ -652,6 +652,7 @@ edit from 00:
 2. Introduce a Batch Authorization Identifier to Link the Batch Token and Derived Downscoped Tokens- PR #5
 3. Clarify Sub Client Additional Authorization during Task Excution PR #6
 4. Clarify how the designated Sub-Client is identified and verified in the cross-domain flow PR #7
+5. Specify error responses for Batch Token usage and token exchange PR #8
 
 
 
