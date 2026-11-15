@@ -45,6 +45,7 @@ normative:
   RFC7523:
   RFC9068:
   RFC7662:
+  RFC6750:
 
 informative:
   I-D.ietf-oauth-identity-chaining:
@@ -317,7 +318,11 @@ Figure 3 shows an example of the Batch Token JWT payload, which encapsulates all
 
 ### Token Exchange Request
 
-When a Sub-Client receives a Batch Token from the Leader-Client, it MUST perform a token exchange request to the AS to obtain a Downscoped Token. The Batch Token MUST NOT be used directly to the RS to redeem resources by anyone. Within the token exchange request, the parameters described in section 2.1 of {{RFC8693}} apply with the following additional requirements:
+When a Sub-Client receives a Batch Token from the Leader-Client, it MUST exchange the Batch Token at the AS to obtain a Downscoped Token before accessing protected resources.
+
+A Batch Token MUST NOT be used directly to access protected resources at an RS. An RS receiving a Batch Token as an access token MUST reject the request with HTTP 401 (Unauthorized) and return the `invalid_token` error as specified in Section 3.1 of {{RFC6750}}.
+
+Within the token exchange request, the parameters described in Section 2.1 of {{RFC8693}} apply with the following additional requirements:
 
 **resource**<br>
 **OPTIONAL.** The URI of the target RS where the Sub-Client intends to use the Downscoped Token.
@@ -366,6 +371,7 @@ The claims of the `actor_token` are detailed in Figure 5.
 *Figure 5: Actor Token Claims*
 
 
+
 ### Processing Rules of the Authorization Server
 
 Upon receiving a token exchange request, the AS MUST:
@@ -385,6 +391,17 @@ Upon receiving a token exchange request, the AS MUST:
 * The AS MUST preserve the `batch_id` when issuing a Downscoped Token. For JWT Downscoped Tokens, the AS MUST include the `batch_id` claim. For other token formats, the AS MUST maintain an equivalent association.
 
 * If shared constraints apply to a batch authorization, the AS MUST enforce them across all Downscoped Tokens associated with the same `batch_id` when issuing a Downscoped Token. Examples include a total spending limit, a maximum number of transactions, and a total usage quota.
+
+
+### Error Responses
+
+The AS MUST return error responses for token exchange requests in accordance with Section 2.2.2 of {{RFC8693}}.
+
+* If the token exchange request is invalid, or the `subject_token` or `actor_token` is invalid or unacceptable based on policy, the AS MUST return the `invalid_request` error. This includes the case where no authorization items match the authenticated Sub-Client.
+
+* If the AS is unwilling or unable to issue a token for a target service indicated by the `resource` or `audience` parameter, it SHOULD return the `invalid_target` error.
+
+* If client authentication fails, the AS MUST return the `invalid_client` error as specified in Section 5.2 of {{RFC6749}}.
 
 ### Downscoped Token Claims
 
