@@ -1050,7 +1050,7 @@ svg {
 </tr></thead>
 <tfoot><tr>
 <td class="left">Ni &amp; Liu</td>
-<td class="center">Expires 17 May 2027</td>
+<td class="center">Expires 19 May 2027</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1063,12 +1063,12 @@ svg {
 <dd class="internet-draft">draft-ni-oauth-batch-authorization-delegation-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2026-11-13" class="published">13 November 2026</time>
+<time datetime="2026-11-15" class="published">15 November 2026</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Informational</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2027-05-17">17 May 2027</time></dd>
+<dd class="expires"><time datetime="2027-05-19">19 May 2027</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1117,7 +1117,7 @@ svg {
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 17 May 2027.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 19 May 2027.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1182,7 +1182,10 @@ svg {
                     <p id="section-toc.1-1.3.2.3.2.2.1"><a href="#section-3.3.2" class="auto internal xref">3.3.2</a>.  <a href="#name-processing-rules-of-the-aut" class="internal xref">Processing Rules of the Authorization Server</a></p>
 </li>
                   <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.3.2.3">
-                    <p id="section-toc.1-1.3.2.3.2.3.1"><a href="#section-3.3.3" class="auto internal xref">3.3.3</a>.  <a href="#name-downscoped-token-claims" class="internal xref">Downscoped Token Claims</a></p>
+                    <p id="section-toc.1-1.3.2.3.2.3.1"><a href="#section-3.3.3" class="auto internal xref">3.3.3</a>.  <a href="#name-error-responses" class="internal xref">Error Responses</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.3.2.4">
+                    <p id="section-toc.1-1.3.2.3.2.4.1"><a href="#section-3.3.4" class="auto internal xref">3.3.4</a>.  <a href="#name-downscoped-token-claims" class="internal xref">Downscoped Token Claims</a></p>
 </li>
                 </ul>
 </li>
@@ -1580,26 +1583,45 @@ svg {
           </ul>
 </section>
 </div>
-<div id="downscoped-token-claims">
+<div id="error-responses">
 <section id="section-3.3.3">
-          <h4 id="name-downscoped-token-claims">
-<a href="#section-3.3.3" class="section-number selfRef">3.3.3. </a><a href="#name-downscoped-token-claims" class="section-name selfRef">Downscoped Token Claims</a>
+          <h4 id="name-error-responses">
+<a href="#section-3.3.3" class="section-number selfRef">3.3.3. </a><a href="#name-error-responses" class="section-name selfRef">Error Responses</a>
           </h4>
-<p id="section-3.3.3-1">The AS generates a Downscoped Token that only contains the permissions in the filtered authorization items. The format of this token MAY be a JWT access token conforming to <span>[<a href="#RFC9068" class="cite xref">RFC9068</a>]</span> or any other format at the AS's discretion. If a JWT Downscoped Token is used, the following constraints on its claim values apply:<a href="#section-3.3.3-1" class="pilcrow">¶</a></p>
-<p id="section-3.3.3-2"><strong>sub</strong><br>
-            <strong>REQUIRED.</strong> The owner who grants the consent.<a href="#section-3.3.3-2" class="pilcrow">¶</a></p>
-<p id="section-3.3.3-3"><strong>client_id</strong><br>
-            <strong>REQUIRED.</strong> The identifier of the authenticated sub‑client.<a href="#section-3.3.3-3" class="pilcrow">¶</a></p>
-<p id="section-3.3.3-4"><strong>aud</strong><br>
-            <strong>REQUIRED.</strong> The target RS where the Sub-Client intends to use the Downscoped Token.<a href="#section-3.3.3-4" class="pilcrow">¶</a></p>
-<p id="section-3.3.3-5"><strong>authorization_details</strong><br>
-            <strong>OPTIONAL.</strong> A JSON array containing the permissions from the filtered authorization items. Since the <code>may_act</code> field has already been enforced as a designated actor by the AS during token exchange, it MAY be omitted in the Downscoped Token.<a href="#section-3.3.3-5" class="pilcrow">¶</a></p>
-<p id="section-3.3.3-6"><strong>exp</strong><br>
-            <strong>REQUIRED.</strong> The expiration time of the Downscoped Token, which MUST NOT exceed the expiration time (<code>exp</code>) of the Batch Token.<a href="#section-3.3.3-6" class="pilcrow">¶</a></p>
-<p id="section-3.3.3-7"><strong>batch_id</strong><br>
-            <strong>REQUIRED.</strong> The identifier of the batch authorization from which the Downscoped Token is derived. It MUST match the <code>batch_id</code> of the corresponding Batch Token.<a href="#section-3.3.3-7" class="pilcrow">¶</a></p>
-<p id="section-3.3.3-8">Figure 6 shows a Downscoped Token issued to the Flight-Agent after token exchange. Its <code>sub</code> claim identifies the end‑user who grants the consent, its <code>aud</code> claim points directly to target service (https://example.com/flights), and the <code>client_id</code> identifies the Flight-Agent. The <code>authorization_details</code> array contains only the flight‑booking permission, with the <code>may_act</code> field removed.<a href="#section-3.3.3-8" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-3.3.3-9">
+<p id="section-3.3.3-1">The AS MUST return error responses for token exchange requests in accordance with Section 2.2.2 of <span>[<a href="#RFC8693" class="cite xref">RFC8693</a>]</span>.<a href="#section-3.3.3-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-3.3.3-2.1">
+              <p id="section-3.3.3-2.1.1">If the token exchange request is invalid, or the <code>subject_token</code> or <code>actor_token</code> is invalid or unacceptable based on policy, the AS MUST return the <code>invalid_request</code> error. This includes the case where no authorization items match the authenticated Sub-Client.<a href="#section-3.3.3-2.1.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-3.3.3-2.2">
+              <p id="section-3.3.3-2.2.1">If the AS is unwilling or unable to issue a token for a target service indicated by the <code>resource</code> or <code>audience</code> parameter, it SHOULD return the <code>invalid_target</code> error.<a href="#section-3.3.3-2.2.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-3.3.3-2.3">
+              <p id="section-3.3.3-2.3.1">If client authentication fails, the AS MUST return the <code>invalid_client</code> error as specified in Section 5.2 of <span>[<a href="#RFC6749" class="cite xref">RFC6749</a>]</span>.<a href="#section-3.3.3-2.3.1" class="pilcrow">¶</a></p>
+</li>
+          </ul>
+</section>
+</div>
+<div id="downscoped-token-claims">
+<section id="section-3.3.4">
+          <h4 id="name-downscoped-token-claims">
+<a href="#section-3.3.4" class="section-number selfRef">3.3.4. </a><a href="#name-downscoped-token-claims" class="section-name selfRef">Downscoped Token Claims</a>
+          </h4>
+<p id="section-3.3.4-1">The AS generates a Downscoped Token that only contains the permissions in the filtered authorization items. The format of this token MAY be a JWT access token conforming to <span>[<a href="#RFC9068" class="cite xref">RFC9068</a>]</span> or any other format at the AS's discretion. If a JWT Downscoped Token is used, the following constraints on its claim values apply:<a href="#section-3.3.4-1" class="pilcrow">¶</a></p>
+<p id="section-3.3.4-2"><strong>sub</strong><br>
+            <strong>REQUIRED.</strong> The owner who grants the consent.<a href="#section-3.3.4-2" class="pilcrow">¶</a></p>
+<p id="section-3.3.4-3"><strong>client_id</strong><br>
+            <strong>REQUIRED.</strong> The identifier of the authenticated sub‑client.<a href="#section-3.3.4-3" class="pilcrow">¶</a></p>
+<p id="section-3.3.4-4"><strong>aud</strong><br>
+            <strong>REQUIRED.</strong> The target RS where the Sub-Client intends to use the Downscoped Token.<a href="#section-3.3.4-4" class="pilcrow">¶</a></p>
+<p id="section-3.3.4-5"><strong>authorization_details</strong><br>
+            <strong>OPTIONAL.</strong> A JSON array containing the permissions from the filtered authorization items. Since the <code>may_act</code> field has already been enforced as a designated actor by the AS during token exchange, it MAY be omitted in the Downscoped Token.<a href="#section-3.3.4-5" class="pilcrow">¶</a></p>
+<p id="section-3.3.4-6"><strong>exp</strong><br>
+            <strong>REQUIRED.</strong> The expiration time of the Downscoped Token, which MUST NOT exceed the expiration time (<code>exp</code>) of the Batch Token.<a href="#section-3.3.4-6" class="pilcrow">¶</a></p>
+<p id="section-3.3.4-7"><strong>batch_id</strong><br>
+            <strong>REQUIRED.</strong> The identifier of the batch authorization from which the Downscoped Token is derived. It MUST match the <code>batch_id</code> of the corresponding Batch Token.<a href="#section-3.3.4-7" class="pilcrow">¶</a></p>
+<p id="section-3.3.4-8">Figure 6 shows a Downscoped Token issued to the Flight-Agent after token exchange. Its <code>sub</code> claim identifies the end‑user who grants the consent, its <code>aud</code> claim points directly to target service (https://example.com/flights), and the <code>client_id</code> identifies the Flight-Agent. The <code>authorization_details</code> array contains only the flight‑booking permission, with the <code>may_act</code> field removed.<a href="#section-3.3.4-8" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-3.3.4-9">
 <pre>
 {
   "iss": "https://as.example.com",
@@ -1618,9 +1640,9 @@ svg {
     }
   ]
 }
-</pre><a href="#section-3.3.3-9" class="pilcrow">¶</a>
+</pre><a href="#section-3.3.4-9" class="pilcrow">¶</a>
 </div>
-<p id="section-3.3.3-10"><em>Figure 6: Downscoped Token Payload</em><a href="#section-3.3.3-10" class="pilcrow">¶</a></p>
+<p id="section-3.3.4-10"><em>Figure 6: Downscoped Token Payload</em><a href="#section-3.3.4-10" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
