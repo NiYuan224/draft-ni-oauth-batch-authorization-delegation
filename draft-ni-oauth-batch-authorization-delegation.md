@@ -402,7 +402,7 @@ The AS MUST return error responses for token exchange requests in accordance wit
 * If the AS is unwilling or unable to issue a token for a target service indicated by the `resource` or `audience` parameter, it SHOULD return the `invalid_target` error.
 
 * If client authentication fails, the AS MUST return the `invalid_client` error as specified in Section 5.2 of {{RFC6749}}.
-  
+
 ### Downscoped Token Claims
 
 The AS generates a Downscoped Token that only contains the permissions in the filtered authorization items. The format of this token MAY be a JWT access token conforming to {{RFC9068}} or any other format at the AS's discretion. If a JWT Downscoped Token is used, the following constraints on its claim values apply:
