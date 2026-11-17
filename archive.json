@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-11-08T05:01:15.031817+00:00",
+  "timestamp": "2026-11-17T07:02:03.448717+00:00",
   "repo": "NiYuan224/draft-ni-oauth-batch-authorization-delegation",
   "labels": [
     {
@@ -247,6 +247,34 @@
       "mergedBy": "NiYuan224",
       "mergeCommit": {
         "oid": "8f16814177aef44487f4d6b48000c49b1942db03"
+      },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 8,
+      "id": "PR_kwDOS4b4z88AAAABPUxIDg",
+      "title": "Specify error responses for Batch Token usage and token exchange",
+      "url": "https://github.com/NiYuan224/draft-ni-oauth-batch-authorization-delegation/pull/8",
+      "state": "MERGED",
+      "author": "NiYuan224",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "Rejecting direct use of a Batch Token at an RS with the invalid_token error.\nSpecifying OAuth error responses for token exchange requests.\n",
+      "createdAt": "2026-11-15T13:51:51Z",
+      "updatedAt": "2026-11-15T13:52:36Z",
+      "baseRepository": "NiYuan224/draft-ni-oauth-batch-authorization-delegation",
+      "baseRefName": "main",
+      "baseRefOid": "8c584db63b257f7ad05e41552f1962efa5494141",
+      "headRepository": "NiYuan224/draft-ni-oauth-batch-authorization-delegation",
+      "headRefName": "NiYuan224-patch-1",
+      "headRefOid": "2df396cd9516448189968855ee5aacbb560f7f2b",
+      "closedAt": "2026-11-15T13:52:28Z",
+      "mergedAt": "2026-11-15T13:52:28Z",
+      "mergedBy": "NiYuan224",
+      "mergeCommit": {
+        "oid": "d1022eea1fb357b66c77eb24220c6c429387a82c"
       },
       "comments": [],
       "reviews": []
